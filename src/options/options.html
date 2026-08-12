@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Phylax settings</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Phylax</h1>
+      <p class="lede">
+        Verdicts appear on npm, PyPI and GitHub pages. Your API key stays in this
+        browser and is only sent to the Phylax API.
+      </p>
+
+      <label for="apiKey">API key</label>
+      <input id="apiKey" type="password" autocomplete="off" spellcheck="false" placeholder="phy_..." />
+
+      <label for="baseUrl">API base URL</label>
+      <input id="baseUrl" type="url" autocomplete="off" spellcheck="false" />
+
+      <label class="row">
+        <input id="enabled" type="checkbox" />
+        <span>Show verdicts while browsing</span>
+      </label>
+
+      <div class="actions">
+        <button id="save" type="button">Save</button>
+        <button id="forget" type="button" class="secondary">Forget key</button>
+      </div>
+
+      <p id="status" role="status"></p>
+    </main>
+    <script type="module" src="options.js"></script>
+  </body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "name": "@phylax/chrome",
+  "version": "0.1.0",
+  "description": "Browser extension that shows Phylax supply chain verdicts on npm, PyPI and GitHub pages.",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\"",
+    "package": "npm run clean && npm run build && node scripts/pack.mjs",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "phylax",
+    "chrome-extension",
+    "supply-chain",
+    "security"
+  ],
+  "devDependencies": {
+    "@types/chrome": "^0.0.287",
+    "@types/node": "^22.10.2",
+    "esbuild": "^0.28.0",
+    "typescript": "^5.7.2",
+    "vitest": "^4.1.10"
+  }
+}
