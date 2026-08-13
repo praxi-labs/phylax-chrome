@@ -20,6 +20,8 @@ jobs:
     needs: tag
     if: needs.tag.outputs.tagged == 'true'
     uses: praxi-labs/ci/.github/workflows/chrome-publish.yml@v1
+    with:
+      release-tag: v${{ needs.tag.outputs.version }}
     permissions:
       contents: write
     secrets:
