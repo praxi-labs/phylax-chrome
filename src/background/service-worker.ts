@@ -1,5 +1,5 @@
 import { TtlCache } from './cache.js'
-import { verifySubject, type Outcome } from '../core/client.js'
+import { verifyMany, verifySubject, type Outcome } from '../core/client.js'
 import { readConfig } from '../core/storage.js'
 import { subjectFor, type Subject } from '../core/artifact-ref.js'
 import { STORAGE_KEYS } from '../core/constants.js'
@@ -7,6 +7,11 @@ import { STORAGE_KEYS } from '../core/constants.js'
 export interface VerifyRequest {
   type: 'phylax.verify'
   url: string
+}
+
+export interface VerifyBatchRequest {
+  type: 'phylax.verifyMany'
+  purls: string[]
 }
 
 export interface VerifyResponse {
@@ -50,8 +55,40 @@ async function resolve(url: string): Promise<VerifyResponse> {
   }
 }
 
+const batchCache = new TtlCache<Record<string, unknown>>()
+
+async function resolveMany(purls: string[]): Promise<Record<string, Record<string, unknown>>> {
+  const config = await readConfig()
+  if (!config.enabled || !config.apiKey) return {}
+
+  const known: Record<string, Record<string, unknown>> = {}
+  const missing: string[] = []
+  for (const purl of purls) {
+    const hit = batchCache.get(`b:${purl}`)
+    if (hit) known[purl] = hit as Record<string, unknown>
+    else missing.push(purl)
+  }
+
+  if (missing.length > 0) {
+    const fetched = await verifyMany(config, missing)
+    for (const [purl, result] of Object.entries(fetched)) {
+      batchCache.set(`b:${purl}`, result)
+      known[purl] = result
+    }
+  }
+  return known
+}
+
 chrome.runtime.onMessage.addListener((message: unknown, _sender, sendResponse) => {
   if (!message || typeof message !== 'object') return false
+
+  if ((message as VerifyBatchRequest).type === 'phylax.verifyMany') {
+    const purls = (message as VerifyBatchRequest).purls
+    if (!Array.isArray(purls)) return false
+    resolveMany(purls.map(String)).then(sendResponse, () => sendResponse({}))
+    return true
+  }
+
   if ((message as VerifyRequest).type !== 'phylax.verify') return false
   const url = String((message as VerifyRequest).url ?? '')
   resolve(url).then(sendResponse, () =>
@@ -62,5 +99,8 @@ chrome.runtime.onMessage.addListener((message: unknown, _sender, sendResponse) =
 
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area !== 'local') return
-  if (STORAGE_KEYS.apiKey in changes || STORAGE_KEYS.baseUrl in changes) cache.clear()
+  if (STORAGE_KEYS.apiKey in changes || STORAGE_KEYS.baseUrl in changes) {
+    cache.clear()
+    batchCache.clear()
+  }
 })

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { subjectFor } from '../../src/core/artifact-ref.js'
+import { siteFor, subjectFor } from '../../src/core/artifact-ref.js'
 
 describe('subjectFor', () => {
   it('reads an npm package page', () => {
@@ -52,5 +52,65 @@ describe('subjectFor', () => {
     expect(subjectFor('https://example.com/package/express')).toBeNull()
     expect(subjectFor('https://www.npmjs.com/')).toBeNull()
     expect(subjectFor('not a url')).toBeNull()
+  })
+})
+
+describe('the registries Socket covers', () => {
+  it('reads a Go module page', () => {
+    expect(subjectFor('https://pkg.go.dev/github.com/gin-gonic/gin@v1.10.0')).toEqual({
+      kind: 'package',
+      purl: 'pkg:golang/github.com/gin-gonic/gin@v1.10.0',
+      label: 'github.com/gin-gonic/gin@v1.10.0',
+    })
+  })
+
+  it('ignores Go pages that are not modules', () => {
+    expect(subjectFor('https://pkg.go.dev/search?q=gin')).toBeNull()
+    expect(subjectFor('https://pkg.go.dev/about')).toBeNull()
+  })
+
+  it('reads a RubyGems page', () => {
+    expect(subjectFor('https://rubygems.org/gems/rails/versions/7.1.3')).toEqual({
+      kind: 'package',
+      purl: 'pkg:gem/rails@7.1.3',
+      label: 'rails 7.1.3',
+    })
+  })
+
+  it('reads a NuGet page', () => {
+    expect(subjectFor('https://www.nuget.org/packages/Newtonsoft.Json/13.0.3')).toEqual({
+      kind: 'package',
+      purl: 'pkg:nuget/Newtonsoft.Json@13.0.3',
+      label: 'Newtonsoft.Json 13.0.3',
+    })
+  })
+
+  it('reads a Maven Central page', () => {
+    expect(subjectFor('https://central.sonatype.com/artifact/com.google.guava/guava/33.0.0')).toEqual({
+      kind: 'package',
+      purl: 'pkg:maven/com.google.guava/guava@33.0.0',
+      label: 'com.google.guava:guava:33.0.0',
+    })
+  })
+})
+
+describe('search result links', () => {
+  it('turns an npm search link into a package URL', () => {
+    const site = siteFor('https://www.npmjs.com/search?q=express')
+    expect(site?.linkToPurl?.('/package/express')).toBe('pkg:npm/express')
+    expect(site?.linkToPurl?.('/package/@types/node')).toBe('pkg:npm/@types/node')
+  })
+
+  it('turns a PyPI search link into a package URL', () => {
+    const site = siteFor('https://pypi.org/search/?q=requests')
+    expect(site?.linkToPurl?.('/project/requests/')).toBe('pkg:pypi/requests')
+  })
+
+  it('has no search selector for registries without one', () => {
+    expect(siteFor('https://pkg.go.dev/x/y')?.searchSelector).toBeUndefined()
+  })
+
+  it('returns no site for an unrelated host', () => {
+    expect(siteFor('https://example.com/package/express')).toBeNull()
   })
 })

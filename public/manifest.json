@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Phylax",
   "version": "0.1.0",
-  "description": "See a Phylax verdict on npm, PyPI and GitHub pages before you install anything.",
+  "description": "See a Phylax verdict on npm, PyPI, Go, RubyGems, NuGet, Maven and GitHub before you install anything.",
   "minimum_chrome_version": "116",
   "permissions": [
     "storage",
@@ -24,8 +24,12 @@
   "content_scripts": [
     {
       "matches": [
-        "https://www.npmjs.com/package/*",
-        "https://pypi.org/project/*",
+        "https://www.npmjs.com/*",
+        "https://pypi.org/*",
+        "https://pkg.go.dev/*",
+        "https://rubygems.org/*",
+        "https://www.nuget.org/*",
+        "https://central.sonatype.com/*",
         "https://github.com/*"
       ],
       "js": [

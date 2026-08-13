@@ -13,11 +13,18 @@ findings by severity. The popup shows the same result for the current tab.
 
 Supported pages:
 
-| Site | Page | Reference sent |
-| --- | --- | --- |
-| npmjs.com | `/package/name`, `/package/name/v/1.2.3` | `pkg:npm/name@1.2.3` |
-| pypi.org | `/project/name`, `/project/name/1.2.3` | `pkg:pypi/name@1.2.3` |
-| github.com | `/owner/repo` | the repository URL |
+| Site | Reference sent |
+| --- | --- |
+| npmjs.com | `pkg:npm/name@1.2.3` |
+| pypi.org | `pkg:pypi/name@1.2.3` |
+| pkg.go.dev | `pkg:golang/host/path@v1.2.3` |
+| rubygems.org | `pkg:gem/name@1.2.3` |
+| nuget.org | `pkg:nuget/Name@1.2.3` |
+| central.sonatype.com | `pkg:maven/group/artifact@1.2.3` |
+| github.com | the repository URL |
+
+On npm, PyPI and RubyGems search results it also puts a verdict next to each hit, in one
+batched request rather than one per row.
 
 ## Install for development
 

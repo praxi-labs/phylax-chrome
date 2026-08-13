@@ -11,6 +11,8 @@ export type Outcome =
 
 const UPGRADE_STATUSES = new Set([402, 403])
 
+export const MAX_BATCH = 25
+
 function messageFrom(body: unknown, fallback: string): string {
   if (body && typeof body === 'object') {
     const detail = (body as Record<string, unknown>).detail
@@ -19,6 +21,47 @@ function messageFrom(body: unknown, fallback: string): string {
     if (typeof message === 'string' && message) return message
   }
   return fallback
+}
+
+export async function verifyMany(
+  config: Config,
+  purls: string[],
+): Promise<Record<string, Record<string, unknown>>> {
+  if (!config.apiKey || purls.length === 0) return {}
+
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
+
+  try {
+    const response = await fetch(new URL(PATHS.artifactVerify, config.baseUrl).toString(), {
+      method: 'POST',
+      headers: {
+        authorization: `Bearer ${config.apiKey}`,
+        'content-type': 'application/json',
+        accept: 'application/json',
+      },
+      body: JSON.stringify({ artifacts: purls.slice(0, MAX_BATCH) }),
+      signal: controller.signal,
+      credentials: 'omit',
+      cache: 'no-store',
+    })
+    if (!response.ok) return {}
+    const body = await response.json()
+    if (!Array.isArray(body)) return {}
+
+    const out: Record<string, Record<string, unknown>> = {}
+    for (const entry of body) {
+      if (entry && typeof entry === 'object') {
+        const key = String((entry as Record<string, unknown>).artifact ?? '')
+        if (key) out[key] = entry as Record<string, unknown>
+      }
+    }
+    return out
+  } catch {
+    return {}
+  } finally {
+    clearTimeout(timer)
+  }
 }
 
 export async function verifySubject(config: Config, subject: Subject): Promise<Outcome> {
