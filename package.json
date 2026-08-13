@@ -1,6 +1,6 @@
 {
   "name": "@phyi/chrome",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Browser extension that shows Phylax supply chain verdicts on npm, PyPI and GitHub pages.",
   "license": "MIT",
   "private": true,
