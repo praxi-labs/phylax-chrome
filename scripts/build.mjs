@@ -15,6 +15,7 @@ const ENTRIES = [
 
 const ASSETS = [
   ['public/manifest.json', 'manifest.json'],
+  ['public/icons', 'icons'],
   ['src/content/overlay.css', 'content/overlay.css'],
   ['src/options/options.html', 'options/options.html'],
   ['src/options/options.css', 'options/options.css'],
@@ -42,7 +43,7 @@ for (const [entry, out] of ENTRIES) {
 for (const [from, to] of ASSETS) {
   const target = join(dist, to)
   mkdirSync(dirname(target), { recursive: true })
-  cpSync(join(root, from), target)
+  cpSync(join(root, from), target, { recursive: true })
 }
 
 const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'))
