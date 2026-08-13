@@ -1,5 +1,7 @@
 # Phylax browser extension
 
+[![release](https://img.shields.io/github/v/release/praxi-labs/phylax-chrome?label=release)](https://github.com/praxi-labs/phylax-chrome/releases/latest)
+
 Shows Phylax supply chain verdicts on npm, PyPI and GitHub pages, so you see what
 an artifact looks like before you install it.
 
@@ -59,3 +61,17 @@ test/unit/                unit tests
 The extension carries its own small API client rather than depending on
 `@phyi/sdk`, because the SDK entry point pulls in `node:crypto` for webhook
 signature checks, which does not belong in a browser bundle.
+
+## The rest of Phylax
+
+| Tool | Where to get it |
+| --- | --- |
+| JavaScript SDK | [`@phyi/sdk`](https://www.npmjs.com/package/@phyi/sdk) on npm |
+| Python SDK | [`phylax-sdk`](https://github.com/praxi-labs/phylax-sdk-python), PyPI release pending |
+| MCP server | [`@phyi/mcp`](https://www.npmjs.com/package/@phyi/mcp) on npm |
+| Agent runtime gate | [`@phyi/runtime-gate`](https://www.npmjs.com/package/@phyi/runtime-gate) on npm |
+| VS Code extension | [`phylax.phylax`](https://marketplace.visualstudio.com/items?itemName=phylax.phylax) on the Marketplace |
+| GitHub Action | [`praxi-labs/phylax-action`](https://github.com/praxi-labs/phylax-action) |
+| Browser extension | [`praxi-labs/phylax-chrome`](https://github.com/praxi-labs/phylax-chrome/releases/latest), Web Store listing pending |
+
+Docs live at [phyi.dev](https://phyi.dev).
