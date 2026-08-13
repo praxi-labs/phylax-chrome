@@ -14,3 +14,16 @@ jobs:
       version-path: package.json
     permissions:
       contents: write
+
+  publish:
+    name: Publish
+    needs: tag
+    if: needs.tag.outputs.tagged == 'true'
+    uses: praxi-labs/ci/.github/workflows/chrome-publish.yml@v1
+    permissions:
+      contents: write
+    secrets:
+      CHROME_EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
+      CHROME_CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
+      CHROME_CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
+      CHROME_REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
