@@ -57,5 +57,5 @@ test/unit/                unit tests
 ## Notes
 
 The extension carries its own small API client rather than depending on
-`@phylax/sdk`, because the SDK entry point pulls in `node:crypto` for webhook
+`@phyi/sdk`, because the SDK entry point pulls in `node:crypto` for webhook
 signature checks, which does not belong in a browser bundle.
