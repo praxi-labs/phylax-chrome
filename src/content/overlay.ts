@@ -10,6 +10,13 @@ export interface BadgeContent {
 }
 
 export function badgeFromResult(result: Record<string, unknown>): BadgeContent {
+  if (String(result.coverage ?? '') === 'none') {
+    return {
+      tone: 'neutral',
+      title: 'Not evaluated',
+      detail: 'The network has not analysed this artifact',
+    }
+  }
   const verdict: Verdict = normaliseVerdict(result.verdict)
   const counts = result.finding_counts
   const detail = summariseFindings(counts)

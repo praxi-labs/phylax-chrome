@@ -89,7 +89,10 @@ async function annotateSearch(site: RegistrySite): Promise<void> {
     if (!result) continue
     for (const node of nodes) {
       if (node.nextElementSibling?.hasAttribute?.(PILL_ATTR)) continue
-      node.insertAdjacentElement('afterend', pill(String(result.verdict ?? '')))
+      const shown = String(result.coverage ?? '') === 'none'
+        ? 'UNKNOWN'
+        : String(result.verdict ?? '')
+      node.insertAdjacentElement('afterend', pill(shown))
     }
   }
 }
